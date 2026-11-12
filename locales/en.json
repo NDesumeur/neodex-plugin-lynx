@@ -26,7 +26,6 @@
  "Ia": "Ia",
  "Ic": "Ic",
  "Id": "ID",
- "Jeu des différences en pixel art : deux images presque pareilles, un jardin, une plage ou une ville la nuit, et 5 à 7 différences à trouver avant la fin du temps. Chaque niveau dessine une nouvelle scène, des étoiles selon le temps restant, des indices si tu bloques.": "Pixel art spot-the-difference game: two almost identical pictures, a garden, a beach or a city at night, and 5 to 7 differences to find before time runs out. Every level draws a new scene, stars for the time left, hints if you get stuck.",
  "KAAKHDDDDDDDKSSK": "KAAKHDDDDDDDKSSK",
  "KAAKHHHHHHHHKSSK": "KAAKHHHHHHHHKSSK",
  "KAAKKKKKKKKKKSSK": "KAAKKKKKKKKKKSSK",
@@ -84,5 +83,6 @@
  "secondes, viseur à": "seconds, cursor at",
  "sur": "out of",
  "trouvées": "found",
- "Étoiles": "Stars"
+ "Étoiles": "Stars",
+ "Jeu des différences en pixel art : deux images presque pareilles, un jardin, une plage, une ville la nuit, une forêt, les fonds marins, l'espace ou l'hiver, et 5 à 7 différences à trouver avant la fin du temps. Chaque niveau dessine une nouvelle scène, des étoiles selon le temps restant, des indices si tu bloques.": "Pixel art spot-the-difference game: two almost identical pictures, a garden, a beach, a city at night, a forest, the seabed, space or winter, and 5 to 7 differences to find before time runs out. Every level draws a new scene, stars for the time left, hints if you get stuck."
 }

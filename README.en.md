@@ -17,7 +17,7 @@ A pixel art spot-the-difference game: two almost identical pictures, find what h
 - Each difference you find is circled on both pictures.
 - A **wrong click** costs 5 seconds. You have **a minute and a half** per level.
 - The more time you have left at the end, the more **stars** you earn (up to 3).
-- Every level draws a new scene: a **garden**, a **beach** or a **city at night**. There are 5 differences at first, then 6, then 7.
+- Every level draws a new scene: a **garden**, a **beach**, a **city at night**, a **forest**, the **seabed**, **space** or a **winter** landscape. There are 5 differences at first, then 6, then 7.
 
 ## Stats
 

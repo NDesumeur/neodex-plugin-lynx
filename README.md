@@ -17,7 +17,7 @@ Un jeu des différences en pixel art : deux images presque pareilles, trouve ce 
 - Chaque différence trouvée est entourée sur les deux images.
 - Un **clic faux** coûte 5 secondes. Tu as **une minute et demie** par niveau.
 - Plus il te reste de temps à la fin, plus tu gagnes d'**étoiles** (jusqu'à 3).
-- Chaque niveau dessine une nouvelle scène : un **jardin**, une **plage** ou une **ville la nuit**. Il y a 5 différences au début, puis 6, puis 7.
+- Chaque niveau dessine une nouvelle scène : un **jardin**, une **plage**, une **ville la nuit**, une **forêt**, les **fonds marins**, l'**espace** ou un paysage d'**hiver**. Il y a 5 différences au début, puis 6, puis 7.
 
 ## Statistiques
 

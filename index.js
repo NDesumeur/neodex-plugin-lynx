@@ -319,7 +319,7 @@ const seeded = s => () => { s = s + 0x6D2B79F5 | 0; let t = Math.imul(s ^ s >>> 
 const pxFont = (g, text, x, y, color, size = 8, align = 'left') => { const s = PXK.scale(size); PXK.fill(g, text, x + s, y + s, '#05010b', s, align); PXK.fill(g, text, x, y, color, s, align); };
 
 /* ---------- Lynx : deux images presque pareilles, trouve les différences. Chaque niveau dessine une scène en pixel art
-   (jardin, plage ou ville la nuit) à partir de son numéro, puis change quelques objets à droite : enlevé, autre couleur, retourné, ajouté ---------- */
+   (jardin, plage, ville la nuit, forêt, fonds marins, espace ou hiver) à partir de son numéro, puis change quelques objets à droite : enlevé, autre couleur, retourné, ajouté ---------- */
 const LX = {W: 240, H: 124, PW: 112, PH: 96, LX0: 4, RX0: 124, Y0: 20, TIME: 5400};
 // une nouvelle partie garde le même objet : la boucle du jeu (gameLoop) continue de tourner dessus
 const renew = (old, o) => { if (!old) return o; for (const k of Object.keys(old)) if (k !== 'raf') delete old[k]; return Object.assign(old, o); };
@@ -343,13 +343,23 @@ const LX_SPR = {
   car: ['...kkkkk......', '..kcwwcck.....', '.kcccccccckkk.', 'kccccccccccccl', 'kkkccccccckkkk', '..kwk....kwk..', '...k......k...'],
   lamp: ['kkkk', 'kcck', '.kk.', '.kk.', '.kk.', '.kk.', '.kk.', '.kk.', '.kk.', '.kk.', 'kkkk'],
   moon: ['..kkk.', '.kcck.', 'kcck..', 'kck...', 'kcck..', '.kcck.', '..kkk.'],
+  fish: ['..kkkk..k', '.kcccckkc', 'kckccccck', '.kcccckkc', '..kkkk..k'],
+  weed: ['.c..', 'c.c.', '.c..', '..c.', '.c..', 'c...', '.c..', '..c.', '.c..', '.c..'],
+  octo: ['..kkkk..', '.kcccck.', 'kcwccwck', 'kcecceck', 'kcccccck', '.kckckck', 'kc.kc.kc', 'k..k..k.'],
+  sub: ['......kk......', '.....kcck.....', '..kkkkcckkkk..', '.kccwcccwccck.', 'kccccccccccckk', '.kcccccccccck.', '..kkkkkkkkkk..'],
+  rocket: ['..kk..', '.kcck.', '.kwck.', '.kcck.', 'kcccck', 'kcccck', 'kcccck', 'kckkck', 'kk..kk', '.y..y.', '.y..y.'],
+  ufo: ['....kkkk....', '...kwwwwk...', '.kkkkkkkkkk.', 'kcycccycccyk', '.kkkkkkkkkk.', '..y..y..y...'],
+  pine: ['....k....', '...kck...', '..kccck..', '...kck...', '..kccck..', '.kccccck.', '..kccck..', '.kccccck.', 'kccccccck', 'kkkkbkkkk', '....b....'],
+  snowman: ['..kkk..', '.kkkkk.', '.kwewk.', '.kwywk.', '.ccccc.', 'kwwwwwk', 'kwwkwwk', 'kwwwwwk', 'kwwkwwk', '.kkkkk.'],
+  sled: ['kk......kk', '.kcccccck.', '..k....k..', 'kkkkkkkkkk'],
+  fox: ['k.k.......', 'kckk......', 'kcwck..kk.', 'kcccck.kck', '.kccccccck', '..kckkckk.', '..k..k....'],
 };
 const LX_SPR_PAL = {k: '#1a1408', w: '#ffffff', y: '#ffd84a', g: '#3a8a2a', e: '#1a1408', p: '#ff9ab0', s: '#e8c87a', b: '#8a5a3a', l: '#ffd84a'};
 const LX_ALT = ['#e83a3a', '#3a7ae8', '#ffd84a', '#c84ae8', '#ffffff', '#3ac85a', '#ff8a2a', '#1a1a2a'];
 // une scène : un fond (dessiné tel quel) et des objets ; tout vient du numéro du niveau
 function lxScene(level) {
   const r = seeded(level * 7919 + 13), ri = (a, b) => a + Math.floor(r() * (b - a + 1)), pick = a => a[Math.floor(r() * a.length)], items = [];
-  const theme = ['jardin', 'plage', 'ville'][(level - 1) % 3], add = o => items.push(o);
+  const theme = ['jardin', 'plage', 'ville', 'foret', 'mer', 'espace', 'hiver'][(level - 1) % 7], add = o => items.push(o);
   const spr = (s, x, y, c, more) => add({t: 'spr', s, x, y, c, ...more});
   if (theme === 'jardin') {
     const left = r() < .5, hx = left ? ri(6, 16) : ri(66, 76), tx = left ? ri(70, 84) : ri(14, 28);
@@ -381,6 +391,49 @@ function lxScene(level) {
     spr('star', ri(4, 100), ri(66, 90), '#ff8a2a'); spr('ball', ri(20, 90), ri(68, 78), pick(['#e83a3a', '#3a7ae8']));
     const cx0 = ri(40, 80); spr('castle', cx0, 66, '#e8c87a'); add({t: 'flag', x: cx0 + 4, y: 58, c: '#e83a3a'});
     return {theme, bg: {t: 'plage', wave: r() * 6}, items};
+  }
+  if (theme === 'foret') {  // la forêt : grands arbres, sapins, champignons, un renard, des papillons
+    for (let i = 0, n = ri(1, 2); i < n; i++) add({t: 'cloud', x: ri(4, 80), y: ri(4, 14), bumps: [ri(3, 5), ri(4, 6), ri(2, 4)], c: '#ffffff'});
+    for (let i = 0, n = ri(1, 2); i < n; i++) spr('bird', ri(10, 100), ri(6, 20), '#2a2a3a', {flip: r() < .5});
+    const trees = [ri(10, 24), ri(52, 64), ri(90, 102)];
+    for (const tx of trees) { add({t: 'tree', x: tx, y: ri(66, 72)}); if (r() < .6) for (let i = 0, n = ri(2, 3); i < n; i++) add({t: 'apple', x: tx - 8 + ri(0, 16), y: 38 + ri(0, 12), c: pick(['#e83a3a', '#ffd84a'])}); }
+    for (let i = 0, n = ri(2, 3); i < n; i++) spr('pine', ri(26, 46) + i * 30 > 100 ? ri(30, 44) : ri(26, 46) + i * 30, ri(52, 58), pick(['#2a7a3a', '#3a8a4a']));
+    spr('fox', ri(6, 90), ri(78, 84), '#ff8a2a', {flip: r() < .5});
+    for (let i = 0, n = ri(3, 5); i < n; i++) spr('mush', ri(4, 104), ri(80, 88), pick(['#e83a3a', '#c8a050', '#ffd84a']));
+    for (let i = 0, n = ri(2, 3); i < n; i++) spr('fly', ri(10, 100), ri(30, 70), pick(['#ff8a2a', '#3ab8e8', '#ffd84a', '#c84ae8']));
+    for (let i = 0, n = ri(3, 5); i < n; i++) spr('flower', ri(2, 104), ri(84, 88), pick(['#ffffff', '#ffd84a', '#c84ae8']));
+    return {theme, bg: {t: 'foret', hill: r() * 6}, items};
+  }
+  if (theme === 'mer') {  // sous la mer : poissons, algues, une pieuvre, un sous-marin, des bulles, des étoiles de mer
+    spr('sub', ri(10, 90), ri(10, 20), pick(['#ffd84a', '#e83a3a']), {flip: r() < .5});
+    for (let i = 0, n = ri(4, 6); i < n; i++) spr('fish', ri(4, 100), ri(28, 66), pick(['#ff8a2a', '#3ab8e8', '#ffd84a', '#ff6ab0', '#7ee07a']), {flip: r() < .5});
+    for (let i = 0, n = ri(4, 6); i < n; i++) spr('weed', ri(2, 106), ri(76, 82), pick(['#3a9a3a', '#5ac05a', '#2a7a5a']));
+    spr('octo', ri(30, 90), ri(76, 82), pick(['#c84ae8', '#e83a3a']));
+    for (let i = 0, n = ri(5, 8); i < n; i++) add({t: 'bubble', x: ri(4, 106), y: ri(6, 70), c: '#c8f0ff'});
+    for (let i = 0, n = ri(2, 3); i < n; i++) spr('star', ri(4, 100), ri(84, 90), pick(['#ff8a2a', '#ffd84a']));
+    for (let i = 0, n = ri(2, 3); i < n; i++) spr('shell', ri(4, 104), ri(86, 90), pick(['#ffb0c0', '#f0e0c0']));
+    return {theme, bg: {t: 'mer', wave: r() * 6}, items};
+  }
+  if (theme === 'espace') {  // l'espace : planètes, une fusée, une soucoupe, des étoiles
+    for (let i = 0, n = ri(14, 20); i < n; i++) add({t: 'twinkle', x: ri(3, 106), y: ri(3, 92), c: pick(['#fff8d0', '#c8e0ff', '#ffd0e0'])});
+    add({t: 'planet', x: ri(20, 40), y: ri(22, 34), rad: ri(9, 12), c: pick(['#e8a04a', '#c84ae8', '#3ab8e8']), flip: r() < .5});
+    add({t: 'planet', x: ri(70, 92), y: ri(60, 74), rad: ri(6, 8), c: pick(['#e83a3a', '#7ee07a', '#ffd84a']), flip: r() < .5});
+    add({t: 'sun', x: ri(84, 100), y: ri(10, 16), c: '#ffd84a'});
+    spr('rocket', ri(48, 62), ri(30, 44), pick(['#ffffff', '#e83a3a']));
+    spr('ufo', ri(6, 30), ri(70, 80), pick(['#7ee07a', '#c8c8d8']), {flip: r() < .5});
+    spr('moon', ri(60, 80), ri(8, 14), '#f0f0c0', {flip: r() < .5});
+    return {theme, bg: {t: 'espace'}, items};
+  }
+  if (theme === 'hiver') {  // l'hiver : sapins enneigés, bonhomme de neige, luge, flocons
+    for (let i = 0, n = ri(1, 2); i < n; i++) add({t: 'cloud', x: ri(4, 80), y: ri(4, 16), bumps: [ri(3, 5), ri(4, 7), ri(3, 5)], c: '#ffffff'});
+    const left = r() < .5, hx = left ? ri(6, 14) : ri(70, 78);
+    add({t: 'wall', x: hx, y: 50, c: '#a86a3a'}); add({t: 'roof', x: hx, y: 50, c: '#f0f4ff'}); add({t: 'chim', x: hx + 20, y: 38}); add({t: 'door', x: hx + 11, y: 59, c: '#e83a3a'});
+    add({t: 'win', x: hx + 3, y: 55, c: '#ffd84a'}); add({t: 'win', x: hx + 19, y: 55, c: '#ffd84a'});
+    for (let i = 0, n = ri(3, 4); i < n; i++) spr('pine', (left ? 42 : 4) + i * 16 + ri(0, 4), ri(48, 56), '#2a6a4a');
+    spr('snowman', ri(40, 70), ri(70, 76), '#e83a3a'); spr('sled', ri(10, 90), ri(84, 88), pick(['#e83a3a', '#3a7ae8']), {flip: r() < .5});
+    for (let i = 0, n = ri(10, 14); i < n; i++) add({t: 'flake', x: ri(3, 106), y: ri(3, 60), c: '#ffffff'});
+    spr('bird', ri(10, 100), ri(10, 30), '#e83a3a', {flip: r() < .5});
+    return {theme, bg: {t: 'hiver', hill: r() * 6}, items};
   }
   const bld = []; let x = 0;
   while (x < LX.PW) { const w = ri(16, 26), h = ri(30, 60); bld.push({x, w, h, c: pick(['#2a2e5a', '#34386a', '#262a4a', '#3a3460'])}); x += w + ri(0, 2); }
@@ -417,6 +470,10 @@ function lxDrawItem(g, o) {
     case 'moon': { let rows = LX_SPR.moon; if (o.flip) rows = rows.map(r => [...r].reverse().join('')); const big = rows.flatMap(r => { const d = r.replace(/./g, '$&$&'); return [d, d]; }); sprite(g, big, o.x, o.y, {k, c: o.c}); break; }
     case 'twinkle': px(g, o.c, o.x - 1, o.y, 3, 1); px(g, o.c, o.x, o.y - 1, 1, 3); break;
     case 'bwin': px(g, o.c, o.x, o.y, 3, 4); break;
+    case 'bubble': px(g, o.c, o.x, o.y - 1, 2, 1); px(g, o.c, o.x - 1, o.y, 1, 2); px(g, o.c, o.x + 2, o.y, 1, 2); px(g, o.c, o.x, o.y + 2, 2, 1); px(g, '#ffffff', o.x, o.y, 1, 1); break;
+    case 'flake': px(g, o.c, o.x, o.y, 2, 2); break;
+    case 'planet': lxCircle(g, o.x, o.y, o.rad + 1, k); lxCircle(g, o.x, o.y, o.rad, o.c); lxCircle(g, o.x - 2, o.y - 2, Math.max(1, o.rad >> 2), 'rgba(255,255,255,.35)');
+      if (o.flip) { px(g, k, o.x - o.rad - 5, o.y - 1, o.rad * 2 + 11, 3); px(g, '#f0e0c0', o.x - o.rad - 4, o.y, o.rad * 2 + 9, 1); } break;
   }
 }
 function lxDrawBg(g, bg) {
@@ -428,6 +485,18 @@ function lxDrawBg(g, bg) {
   } else if (bg.t === 'plage') {
     px(g, '#9ad8f8', 0, 0, PW, 40); px(g, '#3a9ad8', 0, 40, PW, 18); for (let x = 0; x < PW; x += 6) px(g, '#8ad0f0', x + Math.round(bg.wave + (x % 12 ? 0 : 2)), 46 + (x % 3) * 3, 3, 1);
     px(g, '#e8d8a0', 0, 58, PW, PH - 58); px(g, '#ffffff', 0, 58, PW, 1); for (let x = 3; x < PW; x += 9) px(g, '#d8c890', x, 70 + (x * 5) % 22, 2, 1);
+  } else if (bg.t === 'foret') {
+    px(g, '#a8d8c8', 0, 0, PW, PH); for (let x = 0; x < PW; x++) { const h = Math.round(16 + 6 * Math.sin(x / 9 + bg.hill) + 4 * Math.sin(x / 4)); px(g, '#4a8a5a', x, 66 - h, 1, h); }
+    px(g, '#3a7a2a', 0, 66, PW, PH - 66); for (let x = 0; x < PW; x += 5) px(g, '#2a6a22', x + (x % 3), 70 + (x * 7) % 24, 2, 1); px(g, '#8a6a3a', 0, 90, PW, 1);
+  } else if (bg.t === 'mer') {
+    for (let y = 0; y < PH; y += 2) px(g, y < 25 ? '#3a9ad8' : y < 55 ? '#2a7ac0' : '#1e5aa0', 0, y, PW, 2);
+    for (let i = 0; i < 4; i++) for (let y = 0; y < 60; y++) if ((y + i) % 3) px(g, 'rgba(255,255,255,.07)', 10 + i * 28 + Math.round(y * .3 + bg.wave), y, 3, 1);
+    px(g, '#e8d090', 0, 84, PW, PH - 84); for (let x = 0; x < PW; x++) px(g, '#d8c080', x, 84 + Math.round(1.5 + 1.5 * Math.sin(x / 6)), 1, 1);
+  } else if (bg.t === 'espace') {
+    px(g, '#0a0618', 0, 0, PW, PH); for (let y = 30; y < 70; y++) for (let x = 0; x < PW; x += 2) if (((x * 13 + y * 7) % 17) === 0) px(g, 'rgba(180,140,255,.18)', x, y, 2, 1);
+  } else if (bg.t === 'hiver') {
+    px(g, '#c8d8f0', 0, 0, PW, PH); px(g, '#d8e4f8', 0, 30, PW, 30); for (let x = 0; x < PW; x++) { const h = Math.round(8 + 5 * Math.sin(x / 16 + bg.hill)); px(g, '#e8eef8', x, 60 - h, 1, h); }
+    px(g, '#ffffff', 0, 60, PW, PH - 60); for (let x = 0; x < PW; x += 7) px(g, '#dce4f4', x + (x % 4), 64 + (x * 5) % 28, 3, 1);
   } else {
     for (let y = 0; y < PH; y += 2) px(g, y < 30 ? '#14143a' : y < 60 ? '#1a1a4a' : '#22225a', 0, y, PW, 2);
     for (const b of bg.bld) { px(g, '#0e0e22', b.x - 1, 82 - b.h - 1, b.w + 2, b.h + 1); px(g, b.c, b.x, 82 - b.h, b.w, b.h); }
@@ -536,6 +605,7 @@ document.addEventListener('keydown', e => {
     const p = local(...at(e)); if (p) { lx.cur = p; lxClick(...p); } };
 }
 $('lxNew').onclick = () => { lxNew(lx?.level || lxs.level); $('lxNew').blur(); };
+$('lxCanvas').__go = n => { lxNew(n); lx.mode = 'play'; };  // pour le test « local » : ouvrir un niveau précis
 {  // vérification : sur 12 niveaux, il y a assez de différences, et chaque pixel qui change entre les deux images est dans une différence ;
    // un clic juste trouve, un clic faux coûte 5 secondes, trouver tout finit le niveau
   const bad = [], keep = lx, keepS = JSON.stringify(lxs), keepB = games.best.lynx;
