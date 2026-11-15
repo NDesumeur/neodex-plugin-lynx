@@ -10,7 +10,7 @@
  "Clic sur une différence, dans l’une des deux images · flèches et Entrée au clavier · H : indice · P : pause": "Click a difference, in either picture · arrows and Enter on the keyboard · H: hint · P: pause",
  "Clique sur l’une des deux images": "Click on either picture",
  "Cz": "Cz",
- "Deux images presque pareilles : à droite, quelques objets ont changé. Un objet a disparu, a changé de couleur ou regarde de l'autre côté. Clique dessus, dans l'image de gauche ou de droite. Un clic faux coûte 5 secondes, un indice 15. Tu as une minute et demie par niveau ; plus il te reste de temps, plus tu gagnes d'étoiles. Jardin, plage et ville la nuit, et de plus en plus de différences.": "Two almost identical pictures: on the right, a few things have changed. Something has disappeared, changed colour or faces the other way. Click it, in the left or right picture. A wrong click costs 5 seconds, a hint 15. You have a minute and a half per level; the more time you have left, the more stars you earn. Garden, beach and city at night, and more and more differences.",
+ "Deux images presque pareilles : à droite, quelques objets ont changé. Un objet a disparu, a changé de couleur ou regarde de l'autre côté. Clique dessus, dans l'image de gauche ou de droite. Un clic faux coûte 5 secondes, un indice 15. Tu as une minute et demie par niveau ; plus il te reste de temps, plus tu gagnes d'étoiles. Dix scènes : jardin, plage, ville la nuit, forêt, fonds marins, espace, hiver, château, désert et ferme, et de plus en plus de différences.": "Two almost identical pictures: on the right, a few things have changed. Something has disappeared, changed colour or faces the other way. Click it, in the left or right picture. A wrong click costs 5 seconds, a hint 15. You have a minute and a half per level; the more time you have left, the more stars you earn. Ten scenes: garden, beach, city at night, forest, seabed, space, winter, castle, desert and farm, and more and more differences.",
  "Différences trouvées": "Differences found",
  "Ea": "Ea",
  "Ec": "Ec",
@@ -26,6 +26,7 @@
  "Ia": "Ia",
  "Ic": "Ic",
  "Id": "ID",
+ "Jeu des différences en pixel art : deux images presque pareilles, un jardin, une plage, une ville la nuit, une forêt, les fonds marins, l'espace, l'hiver, un château, le désert ou la ferme, et 5 à 7 différences à trouver avant la fin du temps. Chaque niveau dessine une nouvelle scène, des étoiles selon le temps restant, des indices si tu bloques. Plein écran.": "Pixel art spot-the-difference game: two almost identical pictures, a garden, a beach, a city at night, a forest, the seabed, space, winter, a castle, the desert or the farm, and 5 to 7 differences to find before time runs out. Every level draws a new scene, stars for the time left, hints if you get stuck. Full screen.",
  "KAAKHDDDDDDDKSSK": "KAAKHDDDDDDDKSSK",
  "KAAKHHHHHHHHKSSK": "KAAKHHHHHHHHKSSK",
  "KAAKKKKKKKKKKSSK": "KAAKKKKKKKKKKSSK",
@@ -60,6 +61,7 @@
  "Oc": "Oc",
  "Od": "Od",
  "PAUSE": "PAUSE",
+ "PLEIN ÉCRAN": "FULL SCREEN",
  "Parties": "Games",
  "RECORDS": "BESTS",
  "Record.": "Best.",
@@ -83,6 +85,5 @@
  "secondes, viseur à": "seconds, cursor at",
  "sur": "out of",
  "trouvées": "found",
- "Étoiles": "Stars",
- "Jeu des différences en pixel art : deux images presque pareilles, un jardin, une plage, une ville la nuit, une forêt, les fonds marins, l'espace ou l'hiver, et 5 à 7 différences à trouver avant la fin du temps. Chaque niveau dessine une nouvelle scène, des étoiles selon le temps restant, des indices si tu bloques.": "Pixel art spot-the-difference game: two almost identical pictures, a garden, a beach, a city at night, a forest, the seabed, space or winter, and 5 to 7 differences to find before time runs out. Every level draws a new scene, stars for the time left, hints if you get stuck."
+ "Étoiles": "Stars"
 }

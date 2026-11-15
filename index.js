@@ -5,8 +5,8 @@ const HTML = `<div class="appWrap wide">
   <div class="gMain"><div class="gameBox"><canvas id="lxCanvas" width="240" height="124" role="img" aria-label="Lynx"></canvas></div>
     <div class="gSide">
       <div class="sysCard"><b>RECORDS</b><div class="gStats" id="lxStats"></div></div>
-      <div class="row"><button class="btn main" id="lxNew">NOUVELLE PARTIE</button></div>
-      <div class="hint">Deux images presque pareilles : à droite, quelques objets ont changé. Un objet a disparu, a changé de couleur ou regarde de l'autre côté. Clique dessus, dans l'image de gauche ou de droite. Un clic faux coûte 5 secondes, un indice 15. Tu as une minute et demie par niveau ; plus il te reste de temps, plus tu gagnes d'étoiles. Jardin, plage et ville la nuit, et de plus en plus de différences.</div>
+      <div class="row"><button class="btn main" id="lxNew">NOUVELLE PARTIE</button><button class="btn" id="gFs">PLEIN ÉCRAN</button></div>
+      <div class="hint">Deux images presque pareilles : à droite, quelques objets ont changé. Un objet a disparu, a changé de couleur ou regarde de l'autre côté. Clique dessus, dans l'image de gauche ou de droite. Un clic faux coûte 5 secondes, un indice 15. Tu as une minute et demie par niveau ; plus il te reste de temps, plus tu gagnes d'étoiles. Dix scènes : jardin, plage, ville la nuit, forêt, fonds marins, espace, hiver, château, désert et ferme, et de plus en plus de différences.</div>
     </div></div>
 </div>`;
 const CSS = `.gMain{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
@@ -15,7 +15,10 @@ const CSS = `.gMain{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
 .gSide{display:flex;flex-direction:column;gap:14px;flex:1;min-width:250px;max-width:420px}
 .gSide .sysCard{display:flex;flex-direction:column}
 .gStats{display:grid;grid-template-columns:1fr auto;gap:4px 14px}
-.gStats b{text-align:right}`;
+.gStats b{text-align:right}
+.gameBox canvas{max-width:calc(100vw - 140px);height:auto;width:min(calc(100vw - 140px),calc(min(72vh,560px) * 240 / 124))}
+.gameBox:fullscreen{padding:0}
+.gameBox:fullscreen canvas{max-width:none;width:min(100vw,calc(100vh * 240 / 124))}`;
 /* ---------- l'habillage pixel art, dessiné à la main : police bitmap (accents compris), cadres, boutons, icônes ----------
    Tout est en pixels pleins, agrandis par 2 sans lissage : aucun dégradé, aucune ombre floue. */
 const PXK = (() => {
@@ -352,14 +355,25 @@ const LX_SPR = {
   pine: ['....k....', '...kck...', '..kccck..', '...kck...', '..kccck..', '.kccccck.', '..kccck..', '.kccccck.', 'kccccccck', 'kkkkbkkkk', '....b....'],
   snowman: ['..kkk..', '.kkkkk.', '.kwewk.', '.kwywk.', '.ccccc.', 'kwwwwwk', 'kwwkwwk', 'kwwwwwk', 'kwwkwwk', '.kkkkk.'],
   sled: ['kk......kk', '.kcccccck.', '..k....k..', 'kkkkkkkkkk'],
+  knight: ['...cc...', '..kkkk..', '..kAak..', '..kkkk..', '.kaaaak.', 'kkaaaakk', 'k.acca.k', '..acca..', '..kaak..', '..k..k..', '.kk..kk.'],
+  dragon: ['...k......kk..', '..kck....kcck.', '.kccck..kcceck', 'kccccckkccccck', '.kcccccccccck.', '..kcccccccck..', '...kckkkkck...', '...kk....kk...'],
+  shield: ['kkkkkk', 'kcccck', 'kcyyck', 'kcyyck', '.kcck.', '..kk..'],
+  torch: ['.c.', 'cyc', '.c.', 'kbk', '.b.', '.b.', '.b.', '.b.'],
+  cactus: ['...kk...', '..kcck..', 'k.kcck..', 'kckcck.k', 'kckcckkc', '.kkcckck', '..kcckk.', '..kcck..', '..kcck..', '..kcck..', '.kkkkkk.'],
+  camel: ['..........kk..', '.........kcck.', '..kk.kk..kcek.', '.kcckcck.kck..', 'kcccccccckck..', 'kccccccccck...', '.kcccccccck...', '..kck..kck....', '..kck..kck....', '..kk...kk.....'],
+  scorpion: ['......kk.', '.....kcck', 'k..k...kc', 'ckkckkkkc', '.kccccck.', 'k.k.k.k..'],
+  cow: ['..........k.', 'kkkkkkkkkkck', 'kaaccaaakaak', 'kaccaaccaaek', 'kaaaaaccaapk', '.kaaaaaaakk.', '.ka.ka..ka..', '.kk.kk..kk..'],
+  pig: ['........k..', '.kkkkkkkck.', 'kccccccccek', 'kccccccccck', 'kccccccccck', '.kck..kck..', '.kk...kk...'],
+  hen: ['...kk.', '..kcek', 'k.kccy', 'kcccck', 'kcccck', '.kcck.', '..yy..'],
+  tractor: ['......kkkk....', '......kaak..k.', '.kkkkkkaak..k.', 'kcccccccccckkk', 'kccccccccccck.', '.kkk.....kkkk.', 'kbabk...kbbabk', '.kkk.....kkkk.'],
   fox: ['k.k.......', 'kckk......', 'kcwck..kk.', 'kcccck.kck', '.kccccccck', '..kckkckk.', '..k..k....'],
 };
-const LX_SPR_PAL = {k: '#1a1408', w: '#ffffff', y: '#ffd84a', g: '#3a8a2a', e: '#1a1408', p: '#ff9ab0', s: '#e8c87a', b: '#8a5a3a', l: '#ffd84a'};
+const LX_SPR_PAL = {k: '#1a1408', w: '#ffffff', y: '#ffd84a', g: '#3a8a2a', e: '#1a1408', p: '#ff9ab0', s: '#e8c87a', b: '#8a5a3a', l: '#ffd84a', a: '#c8ccd8', A: '#5a5e6a'};
 const LX_ALT = ['#e83a3a', '#3a7ae8', '#ffd84a', '#c84ae8', '#ffffff', '#3ac85a', '#ff8a2a', '#1a1a2a'];
 // une scène : un fond (dessiné tel quel) et des objets ; tout vient du numéro du niveau
 function lxScene(level) {
   const r = seeded(level * 7919 + 13), ri = (a, b) => a + Math.floor(r() * (b - a + 1)), pick = a => a[Math.floor(r() * a.length)], items = [];
-  const theme = ['jardin', 'plage', 'ville', 'foret', 'mer', 'espace', 'hiver'][(level - 1) % 7], add = o => items.push(o);
+  const theme = ['jardin', 'plage', 'ville', 'foret', 'mer', 'espace', 'hiver', 'chateau', 'desert', 'ferme'][(level - 1) % 10], add = o => items.push(o);
   const spr = (s, x, y, c, more) => add({t: 'spr', s, x, y, c, ...more});
   if (theme === 'jardin') {
     const left = r() < .5, hx = left ? ri(6, 16) : ri(66, 76), tx = left ? ri(70, 84) : ri(14, 28);
@@ -422,6 +436,7 @@ function lxScene(level) {
     spr('rocket', ri(48, 62), ri(30, 44), pick(['#ffffff', '#e83a3a']));
     spr('ufo', ri(6, 30), ri(70, 80), pick(['#7ee07a', '#c8c8d8']), {flip: r() < .5});
     spr('moon', ri(60, 80), ri(8, 14), '#f0f0c0', {flip: r() < .5});
+    for (let i = 0, n = ri(3, 4); i < n; i++) add({t: 'rock', x: ri(4, 100), y: ri(40, 92), c: pick(['#8a7a6a', '#a88a5a', '#6a6a7a'])});  // des astéroïdes
     return {theme, bg: {t: 'espace'}, items};
   }
   if (theme === 'hiver') {  // l'hiver : sapins enneigés, bonhomme de neige, luge, flocons
@@ -434,6 +449,45 @@ function lxScene(level) {
     for (let i = 0, n = ri(10, 14); i < n; i++) add({t: 'flake', x: ri(3, 106), y: ri(3, 60), c: '#ffffff'});
     spr('bird', ri(10, 100), ri(10, 30), '#e83a3a', {flip: r() < .5});
     return {theme, bg: {t: 'hiver', hill: r() * 6}, items};
+  }
+  if (theme === 'chateau') {  // le château : tours et drapeaux, blasons, torches, un chevalier, un dragon dans le ciel
+    for (let i = 0, n = ri(1, 2); i < n; i++) add({t: 'cloud', x: ri(4, 80), y: ri(4, 14), bumps: [ri(3, 5), ri(4, 6), ri(2, 4)], c: '#ffffff'});
+    spr('dragon', ri(6, 90), ri(4, 14), pick(['#3ac85a', '#e83a3a', '#c84ae8']), {flip: r() < .5});
+    for (const tx of [14, 86]) add({t: 'flag', x: tx + 1, y: 14, c: pick(['#e83a3a', '#3a7ae8', '#ffd84a'])});
+    add({t: 'door', x: 53, y: 70, c: '#8a5a3a'});
+    for (const wx of [10, 26, 82, 98]) add({t: 'win', x: wx - 2, y: 36, c: pick(['#ffd84a', '#1a1a30'])});
+    for (const sx of [34, 72]) spr('shield', sx, 50, pick(['#e83a3a', '#3a7ae8', '#3ac85a']));
+    for (const tx of [44, 66]) spr('torch', tx, 58, '#ff8a2a');
+    spr('knight', ri(4, 30), ri(78, 82), pick(['#e83a3a', '#3a7ae8']), {flip: r() < .5}); spr('knight', ri(76, 100), ri(78, 82), pick(['#ffd84a', '#3ac85a']), {flip: r() < .5});
+    for (let i = 0, n = ri(3, 5); i < n; i++) spr('flower', ri(2, 104), ri(86, 88), pick(['#ffd84a', '#ffffff', '#ff8ab0']));
+    spr('bird', ri(30, 90), ri(18, 28), '#2a2a3a', {flip: r() < .5});
+    return {theme, bg: {t: 'chateau', hill: r() * 6}, items};
+  }
+  if (theme === 'desert') {  // le désert : dunes, pyramide, cactus, chameau, scorpion, oasis
+    add({t: 'sun', x: ri(10, 100), y: ri(8, 14), c: '#ffd84a'});
+    add({t: 'pyramid', x: ri(56, 84), y: 58, c: '#e8b860'});
+    for (let i = 0, n = ri(2, 3); i < n; i++) spr('cactus', ri(4, 100), ri(62, 72), pick(['#3a9a3a', '#5ab84a']), {flip: r() < .5});
+    spr('scorpion', ri(10, 96), ri(82, 88), pick(['#2a2a3a', '#e85a3a']), {flip: r() < .5});
+    const ox = r() < .5 ? ri(6, 20) : ri(80, 94); add({t: 'palm', x: ox, y: 70}); add({t: 'pond', x: ox - 6, y: 72, c: '#3a9ad8'});
+    for (let i = 0, n = ri(2, 3); i < n; i++) add({t: 'coco', x: ox - 3 + i * 3, y: 40 + (i % 2), c: '#8a5a3a'});
+    spr('camel', ox < 50 ? ri(40, 76) : ri(10, 50), ri(66, 70), '#c89a5a', {flip: r() < .5});  // le chameau, loin de l'oasis pour qu'elle ne le cache pas
+    for (let i = 0, n = ri(2, 3); i < n; i++) spr('bird', ri(10, 100), ri(10, 30), '#2a2a3a', {flip: r() < .5});
+    for (let i = 0, n = ri(3, 5); i < n; i++) add({t: 'rock', x: ri(4, 104), y: ri(78, 90), c: pick(['#a88a5a', '#8a7a6a'])});
+    return {theme, bg: {t: 'desert', hill: r() * 6}, items};
+  }
+  if (theme === 'ferme') {  // la ferme : la grange, la clôture, une vache, un cochon, des poules, un tracteur, des bottes de foin
+    for (let i = 0, n = ri(1, 3); i < n; i++) add({t: 'cloud', x: ri(4, 80), y: ri(4, 20), bumps: [ri(3, 5), ri(4, 7), ri(3, 5)], c: '#ffffff'});
+    add({t: 'sun', x: ri(84, 100), y: ri(8, 14), c: '#ffd84a'});
+    const left = r() < .5, hx = left ? ri(6, 14) : ri(70, 78);
+    add({t: 'wall', x: hx, y: 46, c: '#c84a3a'}); add({t: 'roof', x: hx, y: 46, c: pick(['#8a5a3a', '#5a5e6a'])}); add({t: 'door', x: hx + 11, y: 55, c: '#ffffff'}); add({t: 'win', x: hx + 3, y: 50, c: '#ffd84a'});
+    for (let x = left ? 44 : 4; x < (left ? 104 : 64); x += 6) add({t: 'post', x, y: 58});
+    for (let i = 0, n = ri(1, 2); i < n; i++) add({t: 'hay', x: ri(8, 100), y: ri(62, 66), c: '#e8c84a'});  // les bottes de foin derrière les animaux
+    spr('cow', ri(30, 60), ri(70, 76), '#1a1408', {flip: r() < .5}); spr('pig', ri(60, 96), ri(80, 84), '#ff9ab0', {flip: r() < .5});
+    for (let i = 0, n = ri(2, 3); i < n; i++) spr('hen', ri(4, 100), ri(82, 88), pick(['#ffffff', '#c8783a']), {flip: r() < .5});
+    spr('tractor', left ? ri(70, 92) : ri(4, 24), ri(60, 64), pick(['#e83a3a', '#3ac85a', '#3a7ae8']), {flip: r() < .5});
+    for (let i = 0, n = ri(3, 5); i < n; i++) spr('flower', ri(2, 104), ri(86, 88), pick(['#ffd84a', '#ffffff', '#e83a3a']));
+    spr('bird', ri(20, 96), ri(8, 30), '#2a2a3a', {flip: r() < .5});
+    return {theme, bg: {t: 'ferme', hill: r() * 6}, items};
   }
   const bld = []; let x = 0;
   while (x < LX.PW) { const w = ri(16, 26), h = ri(30, 60); bld.push({x, w, h, c: pick(['#2a2e5a', '#34386a', '#262a4a', '#3a3460'])}); x += w + ri(0, 2); }
@@ -472,6 +526,10 @@ function lxDrawItem(g, o) {
     case 'bwin': px(g, o.c, o.x, o.y, 3, 4); break;
     case 'bubble': px(g, o.c, o.x, o.y - 1, 2, 1); px(g, o.c, o.x - 1, o.y, 1, 2); px(g, o.c, o.x + 2, o.y, 1, 2); px(g, o.c, o.x, o.y + 2, 2, 1); px(g, '#ffffff', o.x, o.y, 1, 1); break;
     case 'flake': px(g, o.c, o.x, o.y, 2, 2); break;
+    case 'pyramid': for (let i = 0; i < 26; i++) { px(g, k, o.x - i - 1, o.y - 26 + i, i * 2 + 3, 1); px(g, i % 4 === 3 ? '#a8783a' : o.c, o.x - i, o.y - 26 + i, i * 2 + 1, 1); px(g, '#a8783a', o.x, o.y - 26 + i, i + 1, 1); } px(g, k, o.x - 2, o.y - 6, 4, 6); break;
+    case 'pond': px(g, k, o.x - 1, o.y - 1, 22, 6); px(g, o.c, o.x, o.y, 20, 4); px(g, '#c8f0ff', o.x + 4, o.y + 1, 5, 1); break;
+    case 'rock': px(g, k, o.x - 1, o.y - 1, 7, 4); px(g, o.c, o.x, o.y, 5, 3); px(g, '#d8c8a0', o.x + 1, o.y, 2, 1); break;
+    case 'hay': px(g, k, o.x - 1, o.y - 1, 14, 10); px(g, o.c, o.x, o.y, 12, 9); for (let j = 1; j < 9; j += 3) px(g, '#c8a030', o.x + 1, o.y + j, 10, 1); px(g, '#8a5a3a', o.x + 5, o.y, 2, 9); break;
     case 'planet': lxCircle(g, o.x, o.y, o.rad + 1, k); lxCircle(g, o.x, o.y, o.rad, o.c); lxCircle(g, o.x - 2, o.y - 2, Math.max(1, o.rad >> 2), 'rgba(255,255,255,.35)');
       if (o.flip) { px(g, k, o.x - o.rad - 5, o.y - 1, o.rad * 2 + 11, 3); px(g, '#f0e0c0', o.x - o.rad - 4, o.y, o.rad * 2 + 9, 1); } break;
   }
@@ -494,6 +552,25 @@ function lxDrawBg(g, bg) {
     px(g, '#e8d090', 0, 84, PW, PH - 84); for (let x = 0; x < PW; x++) px(g, '#d8c080', x, 84 + Math.round(1.5 + 1.5 * Math.sin(x / 6)), 1, 1);
   } else if (bg.t === 'espace') {
     px(g, '#0a0618', 0, 0, PW, PH); for (let y = 30; y < 70; y++) for (let x = 0; x < PW; x += 2) if (((x * 13 + y * 7) % 17) === 0) px(g, 'rgba(180,140,255,.18)', x, y, 2, 1);
+  } else if (bg.t === 'chateau') {  // le ciel, la colline, le château gris crénelé avec deux tours
+    px(g, '#9ac8f0', 0, 0, PW, PH); px(g, '#b0d8f8', 0, 24, PW, 30);
+    for (let x = 0; x < PW; x++) { const h = Math.round(8 + 3 * Math.sin(x / 12 + bg.hill)); px(g, '#6ab85a', x, 78 - h, 1, h); }
+    px(g, '#5aa84a', 0, 78, PW, PH - 78);
+    px(g, '#1a1408', 21, 29, 70, 53); px(g, '#a8a8b8', 22, 30, 68, 52); for (let x = 22; x < 90; x += 6) px(g, '#1a1408', x, 26, 4, 4), px(g, '#a8a8b8', x + 1, 27, 2, 3);
+    for (const tx of [6, 78]) { px(g, '#1a1408', tx - 1, 19, 30, 63); px(g, '#b8b8c8', tx, 20, 28, 62); for (let x = tx; x < tx + 28; x += 6) px(g, '#1a1408', x, 15, 4, 5), px(g, '#b8b8c8', x + 1, 16, 2, 4); }
+    for (let y = 34; y < 80; y += 6) for (let x = 2 + (y % 12 ? 3 : 0); x < PW; x += 8) if (x > 6 && x < 104) px(g, '#8a8a9a', x, y, 4, 1);
+    px(g, '#1a1408', 49, 64, 15, 18); px(g, '#2a2236', 50, 65, 13, 17);
+    px(g, '#8a6a3a', 0, 88, PW, 2);
+  } else if (bg.t === 'desert') {
+    px(g, '#f8d8a0', 0, 0, PW, PH); px(g, '#f8e4b8', 0, 20, PW, 30);
+    for (let x = 0; x < PW; x++) { const h = Math.round(10 + 6 * Math.sin(x / 18 + bg.hill)); px(g, '#e8c078', x, 62 - h, 1, h); }
+    px(g, '#f0cc84', 0, 62, PW, PH - 62); for (let x = 0; x < PW; x++) px(g, '#d8b06a', x, 62 + Math.round(2 + 2 * Math.sin(x / 7 + bg.hill)), 1, 1);
+    for (let x = 3; x < PW; x += 9) px(g, '#d8b06a', x, 72 + (x * 5) % 20, 3, 1);
+  } else if (bg.t === 'ferme') {
+    px(g, '#8ad0f0', 0, 0, PW, PH); px(g, '#a8e0f8', 0, 24, PW, 30);
+    for (let x = 0; x < PW; x++) { const h = Math.round(6 + 3 * Math.sin(x / 15 + bg.hill)); px(g, '#8ac86a', x, 56 - h, 1, h); }
+    for (let y = 56; y < PH; y += 4) px(g, y % 8 ? '#6ab84a' : '#5aa83a', 0, y, PW, 4);
+    px(g, '#b88a5a', 0, 90, PW, PH - 90); for (let x = 4; x < PW; x += 11) px(g, '#9a7048', x, 92 + (x % 3), 4, 1);
   } else if (bg.t === 'hiver') {
     px(g, '#c8d8f0', 0, 0, PW, PH); px(g, '#d8e4f8', 0, 30, PW, 30); for (let x = 0; x < PW; x++) { const h = Math.round(8 + 5 * Math.sin(x / 16 + bg.hill)); px(g, '#e8eef8', x, 60 - h, 1, h); }
     px(g, '#ffffff', 0, 60, PW, PH - 60); for (let x = 0; x < PW; x += 7) px(g, '#dce4f4', x + (x % 4), 64 + (x * 5) % 28, 3, 1);
@@ -605,12 +682,14 @@ document.addEventListener('keydown', e => {
     const p = local(...at(e)); if (p) { lx.cur = p; lxClick(...p); } };
 }
 $('lxNew').onclick = () => { lxNew(lx?.level || lxs.level); $('lxNew').blur(); };
-$('lxCanvas').__go = n => { lxNew(n); lx.mode = 'play'; };  // pour le test « local » : ouvrir un niveau précis
+$('lxCanvas').__go = n => { lxNew(n); lx.mode = 'play'; };
+$('lxCanvas').__lx = {st: () => lx, scene: lv => lxScene(lv).theme, sprites: LX_SPR};
+$('gFs').onclick = () => { const box = $('lxCanvas').parentElement; document.fullscreenElement ? document.exitFullscreen() : box.requestFullscreen?.().catch(() => {}); $('gFs').blur(); };  // pour le test « local » : ouvrir un niveau précis
 {  // vérification : sur 12 niveaux, il y a assez de différences, et chaque pixel qui change entre les deux images est dans une différence ;
    // un clic juste trouve, un clic faux coûte 5 secondes, trouver tout finit le niveau
   const bad = [], keep = lx, keepS = JSON.stringify(lxs), keepB = games.best.lynx;
   lxMute = true;
-  for (let L = 1; L <= 12; L++) {
+  for (let L = 1; L <= 20; L++) {
     const v = lxLevel(L), a = lxPixels(v.left), b = lxPixels(v.right), want = L < 4 ? 5 : L < 9 ? 6 : 7;
     if (v.diffs.length < want) bad.push('niveau ' + L + ' : ' + v.diffs.length + ' différences');
     let out = 0;
@@ -623,7 +702,8 @@ $('lxCanvas').__go = n => { lxNew(n); lx.mode = 'play'; };  // pour le test « l
   if (spot) { lxClick(...spot); if (lx.time !== t - 300) bad.push('clic faux sans pénalité'); }
   for (const d of lx.diffs) if (!d.found) lxClick((d.box[0] + d.box[2]) >> 1, (d.box[1] + d.box[3]) >> 1);
   if (!lx.won) bad.push('niveau pas fini');
-  console.assert(!bad.length, 'lynx', bad);
+  for (const [n, rows] of Object.entries(LX_SPR)) if (rows.some(r => r.length !== rows[0].length)) bad.push('dessin ' + n);
+  console.assert(!bad.length, 'lynx', bad); $('lxCanvas').dataset.check = bad.join(' | ') || 'ok';
   Object.assign(lxs, JSON.parse(keepS)); if (keepB === undefined) delete games.best.lynx; else games.best.lynx = keepB;
   lx = keep; lxMute = false;
 }
