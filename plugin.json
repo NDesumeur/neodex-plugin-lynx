@@ -1,7 +1,7 @@
 {
   "id": "neodex.lynx",
   "name": "Lynx",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "author": "NDesumeur",
   "description": "Jeu des différences en pixel art : deux images presque pareilles, un jardin, une plage, une ville la nuit, une forêt, les fonds marins, l'espace, l'hiver, un château, le désert ou la ferme, et 5 à 7 différences à trouver avant la fin du temps. Chaque niveau dessine une nouvelle scène, des étoiles selon le temps restant, des indices si tu bloques. Plein écran.",
   "icon": "icon.png",
