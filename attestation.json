@@ -1,9 +1,9 @@
 {
   "pluginId": "neodex.lynx",
   "repo": "NDesumeur/neodex-plugin-lynx",
-  "version": "1.2.1",
-  "sha256": "1d48385c22720c22b3960699586b8b313e94da1cbd95997c98415bff8e306d07",
-  "approvedAt": "2026-11-16T16:38:49.432Z",
+  "version": "1.2.2",
+  "sha256": "652afe91eae40976d61decfbeb9486fb16de4bbff4e637352dc43612262f2986",
+  "approvedAt": "2026-11-19T23:26:40.969Z",
   "neobase": ">=4.0.0",
-  "signature": "7dNHZMt4nQ+v9Rvo8PU7WI+DXrtS26uYcd2Uwy09y/oIU//AwW/cKxZ72tJmipLDfIcew8DJ4VzeB239HYX3BQ=="
+  "signature": "mO//jpu2EGkpFGYyoEz7EmGgc2vKSHg5hCYX2UBzZSybLGtz2j3d6syWiSRqXW6J6brs3g3QTW58neoZ1vedDg=="
 }
