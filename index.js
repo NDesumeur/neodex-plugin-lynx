@@ -300,6 +300,9 @@ export default async function (ctx) {
   const best = (k, v) => { const b = games.best[k]; if (v > (b ?? 0)) {  // un score nul n'est jamais un record
     games.best[k] = v; saveGames(); return true; } return false; };
   const gstore = (k, init) => (games[k] ??= init);
+  // les trophées de NeoDex (3.4.8 et plus) : succès et records déclarés dans plugin.json ; sur un NeoDex plus ancien, rien ne se passe
+  const trophy = id => { ctx.games?.unlock(id).catch(() => {}); };
+  const trophyRecord = (id, v) => { if (v != null && Number.isFinite(+v)) ctx.games?.record(id, +v).catch(() => {}); };
 function gameLoop(st, appKey, update, draw) {
   cancelAnimationFrame(st.raf);
   const STEP = 1000 / 60; let acc = 0, last = performance.now();
@@ -660,6 +663,7 @@ function lxDraw() {
   if (lx.tick % 15 === 0) g.canvas.setAttribute('aria-label', 'Lynx, niveau ' + lx.level + ' : ' + found + ' différences sur ' + lx.diffs.length + ', ' + sec + ' secondes, viseur à ' + lx.cur[0] + ', ' + lx.cur[1] + (lx.mode === 'over' ? (lx.won ? ', niveau fini' : ', temps écoulé') : '') + '.');
 }
 function lxInfo() {
+  setTimeout(lxTrophies);
   $('lxStats').replaceChildren(...[['Niveau atteint', lxs.level], ['Étoiles', lxs.stars], ['Différences trouvées', lxs.found], ['Parties', lxs.games]].flatMap(([a, c]) => [el('span', '', a), el('b', '', String(c))]));
 }
 document.addEventListener('keydown', e => {
@@ -706,6 +710,13 @@ $('gFs').onclick = () => { const box = $('lxCanvas').parentElement; document.ful
   console.assert(!bad.length, 'lynx', bad); $('lxCanvas').dataset.check = bad.join(' | ') || 'ok';
   Object.assign(lxs, JSON.parse(keepS)); if (keepB === undefined) delete games.best.lynx; else games.best.lynx = keepB;
   lx = keep; lxMute = false;
+}
+// les trophées, tirés des statistiques et des records gardés (aussi à l'ouverture : ce qui a été fait avant compte)
+function lxTrophies() {
+  const b = games.best.lynx || 0, sig = [b, lxs.stars].join(); if (sig === lxTrophies.sig) return; lxTrophies.sig = sig;
+  trophyRecord('niveau', b || null); trophyRecord('etoiles', lxs.stars || null);
+  if (b >= 1) trophy('premier'); if (b >= 10) trophy('n10'); if (b >= 25) trophy('n25'); if (b >= 50) trophy('n50');
+  if (lxs.stars >= 50) trophy('etoiles50'); if (lxs.stars >= 200) trophy('etoiles200');
 }
 ctx.onOpen(() => {
   if (!lx || !lx.g) { lxNew(); lx.g = $('lxCanvas').getContext('2d'); }

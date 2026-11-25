@@ -1,7 +1,7 @@
 {
   "id": "neodex.lynx",
   "name": "Lynx",
-  "version": "1.2.2",
+  "version": "1.3.0",
   "author": "NDesumeur",
   "description": "Jeu des différences en pixel art : deux images presque pareilles, un jardin, une plage, une ville la nuit, une forêt, les fonds marins, l'espace, l'hiver, un château, le désert ou la ferme, et 5 à 7 différences à trouver avant la fin du temps. Chaque niveau dessine une nouvelle scène, des étoiles selon le temps restant, des indices si tu bloques. Plein écran.",
   "icon": "icon.png",
@@ -10,7 +10,10 @@
   "neobase": ">=4.0.0",
   "type": "app",
   "category": "Jeux",
-  "compatibility": ["windows", "linux"],
+  "compatibility": [
+    "windows",
+    "linux"
+  ],
   "syncMode": "aucune",
   "syncInfo": "Rien n'est synchronisé : tes records restent sur cet appareil.",
   "mobile": false,
@@ -19,5 +22,52 @@
   "sdk": "2.1.0",
   "permissions": [
     "storage"
+  ],
+  "succes": [
+    {
+      "id": "premier",
+      "nom": "Œil de lynx",
+      "texte": "Trouver toutes les différences d'une image"
+    },
+    {
+      "id": "n10",
+      "nom": "Rien ne m'échappe",
+      "texte": "Atteindre le niveau 10"
+    },
+    {
+      "id": "n25",
+      "nom": "Loupe d'or",
+      "texte": "Atteindre le niveau 25"
+    },
+    {
+      "id": "n50",
+      "nom": "Vision perçante",
+      "texte": "Atteindre le niveau 50",
+      "cache": true
+    },
+    {
+      "id": "etoiles50",
+      "nom": "Constellation",
+      "texte": "Gagner 50 étoiles en tout"
+    },
+    {
+      "id": "etoiles200",
+      "nom": "Ciel étoilé",
+      "texte": "Gagner 200 étoiles en tout"
+    }
+  ],
+  "records": [
+    {
+      "id": "niveau",
+      "nom": "Niveau le plus loin",
+      "sens": "haut",
+      "format": "nombre"
+    },
+    {
+      "id": "etoiles",
+      "nom": "Étoiles",
+      "sens": "haut",
+      "format": "nombre"
+    }
   ]
 }
